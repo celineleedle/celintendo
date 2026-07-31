@@ -14,10 +14,10 @@ func (r *Registers) BC() uint16 { return uint16(r.B)<<8 | uint16(r.C) }
 func (r *Registers) DE() uint16 { return uint16(r.D)<<8 | uint16(r.E) }
 func (r *Registers) HL() uint16 { return uint16(r.H)<<8 | uint16(r.L) }
 
-const zeroBitIndex = 7
-const subtractionBitIndex = 6
-const halfCarryBitIndex = 5
-const carryBitIndex = 4
+const ZeroBitIndex = 7
+const SubtractionBitIndex = 6
+const HalfCarryBitIndex = 5
+const CarryBitIndex = 4
 
 func (r *Registers) SetFlag(bitIndex int, value bool) {
 	if value {
