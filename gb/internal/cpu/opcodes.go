@@ -1,5 +1,7 @@
 package cpu
 
+import "fmt"
+
 // opcodeFuncMap maps each 1-byte opcode to a handler that executes it and
 // returns (pc, cycles):
 //   - pc     = the instruction's length in bytes (how far to advance PC)
@@ -10,7 +12,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x01: func(c *Cpu) (uint16, int, error) { // LD BC, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x01: %v", err)
 		}
 		c.registers.SetBC(n16)
 		return 3, 12, nil
@@ -35,7 +37,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x11: func(c *Cpu) (uint16, int, error) { // LD DE, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x11: %v", err)
 		}
 		c.registers.SetDE(n16)
 		return 3, 12, nil
@@ -60,7 +62,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x21: func(c *Cpu) (uint16, int, error) { // LD HL, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x21: %v", err)
 		}
 		c.registers.SetHL(n16)
 		return 3, 12, nil
@@ -85,7 +87,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x31: func(c *Cpu) (uint16, int, error) { // LD SP, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x31: %v", err)
 		}
 		c.registers.SP = n16
 		return 3, 12, nil
@@ -108,68 +110,102 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	// 0x40
 	0x40: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // LD B, B
 	0x41: func(c *Cpu) (uint16, int, error) { // LD B, C
-		c.registers.B = c.registers.C
+		err := c.loadRegToReg(0x41)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x41: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x42: func(c *Cpu) (uint16, int, error) { // LD B, D
-		c.registers.B = c.registers.D
+		err := c.loadRegToReg(0x42)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x42: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x43: func(c *Cpu) (uint16, int, error) { // LD B, E
-		c.registers.B = c.registers.E
+		err := c.loadRegToReg(0x43)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x43: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x44: func(c *Cpu) (uint16, int, error) { // LD B, H
-		c.registers.B = c.registers.H
+		err := c.loadRegToReg(0x44)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x44: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x45: func(c *Cpu) (uint16, int, error) { // LD B, L
-		c.registers.B = c.registers.L
+		err := c.loadRegToReg(0x45)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x45: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x46: func(c *Cpu) (uint16, int, error) { // LD B, [HL]
-		value, err := c.mmu.ReadByteAt(c.registers.HL())
+		err := c.loadRegToReg(0x46)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x46: %v", err)
 		}
-		c.registers.B = value
 		return 1, 8, nil
 	},
 	0x47: func(c *Cpu) (uint16, int, error) { // LD B, A
-		c.registers.B = c.registers.A
+		err := c.loadRegToReg(0x47)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x47: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x48: func(c *Cpu) (uint16, int, error) { // LD C, B
-		c.registers.C = c.registers.B
+		err := c.loadRegToReg(0x48)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x48: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x49: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // LD C, C
 	0x4A: func(c *Cpu) (uint16, int, error) { // LD C, D
-		c.registers.C = c.registers.D
+		err := c.loadRegToReg(0x4A)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x4A: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x4B: func(c *Cpu) (uint16, int, error) { // LD C, E
-		c.registers.C = c.registers.E
+		err := c.loadRegToReg(0x4B)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x4B: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x4C: func(c *Cpu) (uint16, int, error) { // LD C, H
-		c.registers.C = c.registers.H
+		err := c.loadRegToReg(0x4C)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x4C: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x4D: func(c *Cpu) (uint16, int, error) { // LD C, L
-		c.registers.C = c.registers.L
+		err := c.loadRegToReg(0x4D)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x4D: %v", err)
+		}
 		return 1, 4, nil
 	},
 	0x4E: func(c *Cpu) (uint16, int, error) { // LD C, [HL]
-		value, err := c.mmu.ReadByteAt(c.registers.HL())
+		err := c.loadRegToReg(0x4E)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("failed opcode 0x4E: %v", err)
 		}
-		c.registers.C = value
 		return 1, 8, nil
 	},
 	0x4F: func(c *Cpu) (uint16, int, error) { // LD C, A
-		c.registers.C = c.registers.A
+		err := c.loadRegToReg(0x4F)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x4F: %v", err)
+		}
 		return 1, 4, nil
 	},
 
