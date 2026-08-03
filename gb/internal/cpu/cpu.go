@@ -26,10 +26,13 @@ func (c *Cpu) Step() int {
 		log.Fatalf("Unknown opcode: 0x%02X at PC: 0x%04X", opcode, c.registers.PC)
 	}
 
-	cycles := opcodeFunc(c)
+	pc, cycles, err := opcodeFunc(c)
+	if err != nil {
+		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
+	}
 	log.Printf("Cycles executed: %d", cycles)
 
-	c.registers.PC++
+	c.registers.PC += pc
 
 	return cycles
 }
