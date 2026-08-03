@@ -20,49 +20,41 @@ type Mmu struct {
 }
 
 func (m *Mmu) ReadByteAt(address uint16) (byte, error) {
-	if address >= 0xE000 && address <= 0xFDFF {
-		return 0x00, fmt.Errorf("attempted to read from echo RAM at address 0x%04X", address)
-	} else if address >= 0xFEA0 && address <= 0xFEFF {
-		return 0x00, fmt.Errorf("attempted to read from unusable memory at address 0x%04X", address)
+	if accessible := m.accessible(address); !accessible {
+		return 0x00, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
 	}
 
 	return m.data[address], nil
 }
 
-func (m *Mmu) ReadNext8(address uint16) (byte, error) {
-	// is this technically the correct check
-	// since it's the next byte
-	if address >= 0xE000 && address <= 0xFDFF {
-		return 0x00, fmt.Errorf("attempted to read from echo RAM at address 0x%04X", address)
-		// same question below
-	} else if address >= 0xFEA0 && address <= 0xFEFF {
-		return 0x00, fmt.Errorf("attempted to read from unusable memory at address 0x%04X", address)
+func (m *Mmu) ReadWordAt(address uint16) (uint16, error) {
+	if accessible := m.accessible(address); !accessible {
+		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
+	} else if accessible := m.accessible(address + 1); !accessible {
+		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address+1)
 	}
 
-	return m.data[address+1], nil
-}
+	lowByte := m.data[address]
+	highByte := m.data[address+1]
 
-func (m *Mmu) ReadNext16(address uint16) (uint16, error) {
-	low, err := m.ReadNext8(address)
-	if err != nil {
-		return 0, err
-	}
-
-	high, err := m.ReadNext8(address + 1)
-	if err != nil {
-		return 0, err
-	}
-
-	return uint16(high)<<8 | uint16(low), nil
+	return uint16(highByte)<<8 | uint16(lowByte), nil
 }
 
 func (m *Mmu) WriteByteAt(address uint16, value byte) error {
-	if address >= 0xE000 && address <= 0xFEFF {
-		return fmt.Errorf("attempted to write to echo RAM at address 0x%04X", address)
-	} else if address >= 0xFEA0 && address <= 0xFEFF {
-		return fmt.Errorf("attempted to write to unusable memory at address 0x%04X", address)
+	if accessible := m.accessible(address); !accessible {
+		return fmt.Errorf("attempted to write to inaccessible memory at address 0x%04X", address)
 	}
 
 	m.data[address] = value
 	return nil
+}
+
+func (m *Mmu) accessible(address uint16) bool {
+	if address >= 0xE000 && address <= 0xFDFF {
+		return false
+	} else if address >= 0xFEA0 && address <= 0xFEFF {
+		return false
+	}
+
+	return true
 }

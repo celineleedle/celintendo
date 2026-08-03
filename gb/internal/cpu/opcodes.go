@@ -8,7 +8,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	// 0x00 - 0x0F
 	0x00: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // NOP
 	0x01: func(c *Cpu) (uint16, int, error) { // LD BC, n16
-		n16, err := c.mmu.ReadNext16(c.registers.PC)
+		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -33,7 +33,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	// 0x10 - 0x1F
 	0x10: func(c *Cpu) (uint16, int, error) { return 2, 4, nil },
 	0x11: func(c *Cpu) (uint16, int, error) { // LD DE, n16
-		n16, err := c.mmu.ReadNext16(c.registers.PC)
+		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -58,7 +58,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	// 0x20 - 0x2F
 	0x20: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0x21: func(c *Cpu) (uint16, int, error) { // LD HL, n16
-		n16, err := c.mmu.ReadNext16(c.registers.PC)
+		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -83,7 +83,7 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	// 0x30 - 0x3F
 	0x30: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0x31: func(c *Cpu) (uint16, int, error) { // LD SP, n16
-		n16, err := c.mmu.ReadNext16(c.registers.PC)
+		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
 		if err != nil {
 			return 0, 0, err
 		}
