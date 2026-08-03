@@ -29,6 +29,33 @@ func (m *Mmu) ReadByteAt(address uint16) (byte, error) {
 	return m.data[address], nil
 }
 
+func (m *Mmu) ReadNext8(address uint16) (byte, error) {
+	// is this technically the correct check
+	// since it's the next byte
+	if address >= 0xE000 && address <= 0xFDFF {
+		return 0x00, fmt.Errorf("attempted to read from echo RAM at address 0x%04X", address)
+		// same question below
+	} else if address >= 0xFEA0 && address <= 0xFEFF {
+		return 0x00, fmt.Errorf("attempted to read from unusable memory at address 0x%04X", address)
+	}
+
+	return m.data[address+1], nil
+}
+
+func (m *Mmu) ReadNext16(address uint16) (uint16, error) {
+	low, err := m.ReadNext8(address)
+	if err != nil {
+		return 0, err
+	}
+
+	high, err := m.ReadNext8(address + 1)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint16(high)<<8 | uint16(low), nil
+}
+
 func (m *Mmu) WriteByteAt(address uint16, value byte) error {
 	if address >= 0xE000 && address <= 0xFEFF {
 		return fmt.Errorf("attempted to write to echo RAM at address 0x%04X", address)

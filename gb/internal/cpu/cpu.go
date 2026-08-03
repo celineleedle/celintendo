@@ -10,11 +10,6 @@ type Cpu struct {
 	mmu Mmu
 }
 
-type Mmu interface {
-	ReadByteAt(address uint16) (byte, error)
-	WriteByteAt(address uint16, value byte) error
-}
-
 func (c *Cpu) Step() int {
 	opcode, err := c.mmu.ReadByteAt(c.registers.PC)
 	if err != nil {
@@ -31,6 +26,7 @@ func (c *Cpu) Step() int {
 		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
 	}
 	log.Printf("Cycles executed: %d", cycles)
+	log.Printf("PC increment: %d", pc)
 
 	c.registers.PC += pc
 
