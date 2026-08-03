@@ -106,22 +106,72 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x3F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
 	// 0x40
-	0x40: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x41: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x42: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x43: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x44: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x45: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x46: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
-	0x47: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x48: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x49: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x4A: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x4B: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x4C: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x4D: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x4E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
-	0x4F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
+	0x40: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // LD B, B
+	0x41: func(c *Cpu) (uint16, int, error) { // LD B, C
+		c.registers.B = c.registers.C
+		return 1, 4, nil
+	},
+	0x42: func(c *Cpu) (uint16, int, error) { // LD B, D
+		c.registers.B = c.registers.D
+		return 1, 4, nil
+	},
+	0x43: func(c *Cpu) (uint16, int, error) { // LD B, E
+		c.registers.B = c.registers.E
+		return 1, 4, nil
+	},
+	0x44: func(c *Cpu) (uint16, int, error) { // LD B, H
+		c.registers.B = c.registers.H
+		return 1, 4, nil
+	},
+	0x45: func(c *Cpu) (uint16, int, error) { // LD B, L
+		c.registers.B = c.registers.L
+		return 1, 4, nil
+	},
+	0x46: func(c *Cpu) (uint16, int, error) { // LD B, [HL]
+		value, err := c.mmu.ReadByteAt(c.registers.HL())
+		if err != nil {
+			return 0, 0, err
+		}
+		c.registers.B = value
+		return 1, 8, nil
+	},
+	0x47: func(c *Cpu) (uint16, int, error) { // LD B, A
+		c.registers.B = c.registers.A
+		return 1, 4, nil
+	},
+	0x48: func(c *Cpu) (uint16, int, error) { // LD C, B
+		c.registers.C = c.registers.B
+		return 1, 4, nil
+	},
+	0x49: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // LD C, C
+	0x4A: func(c *Cpu) (uint16, int, error) { // LD C, D
+		c.registers.C = c.registers.D
+		return 1, 4, nil
+	},
+	0x4B: func(c *Cpu) (uint16, int, error) { // LD C, E
+		c.registers.C = c.registers.E
+		return 1, 4, nil
+	},
+	0x4C: func(c *Cpu) (uint16, int, error) { // LD C, H
+		c.registers.C = c.registers.H
+		return 1, 4, nil
+	},
+	0x4D: func(c *Cpu) (uint16, int, error) { // LD C, L
+		c.registers.C = c.registers.L
+		return 1, 4, nil
+	},
+	0x4E: func(c *Cpu) (uint16, int, error) { // LD C, [HL]
+		value, err := c.mmu.ReadByteAt(c.registers.HL())
+		if err != nil {
+			return 0, 0, err
+		}
+		c.registers.C = value
+		return 1, 8, nil
+	},
+	0x4F: func(c *Cpu) (uint16, int, error) { // LD C, A
+		c.registers.C = c.registers.A
+		return 1, 4, nil
+	},
 
 	// 0x50 - 0x5F  (LD D,r / LD E,r)  — all 1 byte
 	0x50: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
