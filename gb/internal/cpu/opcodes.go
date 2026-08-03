@@ -204,112 +204,112 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 		return 1, 4, nil
 	},
 
-	0x50: func(c *Cpu) (uint16, int, error) {
+	0x50: func(c *Cpu) (uint16, int, error) { // LD D, B
 		err := c.loadRegToReg(0x50)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x50: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x51: func(c *Cpu) (uint16, int, error) {
+	0x51: func(c *Cpu) (uint16, int, error) { // LD D, C
 		err := c.loadRegToReg(0x51)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x51: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x52: func(c *Cpu) (uint16, int, error) {
+	0x52: func(c *Cpu) (uint16, int, error) { // LD D, D
 		err := c.loadRegToReg(0x52)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x52: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x53: func(c *Cpu) (uint16, int, error) {
+	0x53: func(c *Cpu) (uint16, int, error) { // LD D, E
 		err := c.loadRegToReg(0x53)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x53: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x54: func(c *Cpu) (uint16, int, error) {
+	0x54: func(c *Cpu) (uint16, int, error) { // LD D, H
 		err := c.loadRegToReg(0x54)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x54: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x55: func(c *Cpu) (uint16, int, error) {
+	0x55: func(c *Cpu) (uint16, int, error) { // LD D, L
 		err := c.loadRegToReg(0x55)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x55: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x56: func(c *Cpu) (uint16, int, error) {
+	0x56: func(c *Cpu) (uint16, int, error) { // LD D, [HL]
 		err := c.loadRegToReg(0x56)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x56: %v", err)
 		}
 		return 1, 8, nil
 	},
-	0x57: func(c *Cpu) (uint16, int, error) {
+	0x57: func(c *Cpu) (uint16, int, error) { // LD D, A
 		err := c.loadRegToReg(0x57)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x57: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x58: func(c *Cpu) (uint16, int, error) {
+	0x58: func(c *Cpu) (uint16, int, error) { // LD E, B
 		err := c.loadRegToReg(0x58)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x58: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x59: func(c *Cpu) (uint16, int, error) {
+	0x59: func(c *Cpu) (uint16, int, error) { // LD E, C
 		err := c.loadRegToReg(0x59)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x59: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x5A: func(c *Cpu) (uint16, int, error) {
+	0x5A: func(c *Cpu) (uint16, int, error) { // LD E, D
 		err := c.loadRegToReg(0x5A)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5A: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x5B: func(c *Cpu) (uint16, int, error) {
+	0x5B: func(c *Cpu) (uint16, int, error) { // LD E, E
 		err := c.loadRegToReg(0x5B)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5B: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x5C: func(c *Cpu) (uint16, int, error) {
+	0x5C: func(c *Cpu) (uint16, int, error) { // LD E, H
 		err := c.loadRegToReg(0x5C)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5C: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x5D: func(c *Cpu) (uint16, int, error) {
+	0x5D: func(c *Cpu) (uint16, int, error) { // LD E, L
 		err := c.loadRegToReg(0x5D)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5D: %v", err)
 		}
 		return 1, 4, nil
 	},
-	0x5E: func(c *Cpu) (uint16, int, error) {
+	0x5E: func(c *Cpu) (uint16, int, error) { // LD E, [HL]
 		err := c.loadRegToReg(0x5E)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5E: %v", err)
 		}
 		return 1, 8, nil
 	},
-	0x5F: func(c *Cpu) (uint16, int, error) {
+	0x5F: func(c *Cpu) (uint16, int, error) { // LD E, A
 		err := c.loadRegToReg(0x5F)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed opcode 0x5F: %v", err)
