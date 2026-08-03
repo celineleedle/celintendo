@@ -3,14 +3,14 @@ package cpu
 import "fmt"
 
 func (c *Cpu) loadRegToReg(opcode uint16) error {
-	storeRegister := (opcode >> 3) & 0b00111
-	loadRegister := opcode & 0b00000111
+	dstRegister := (opcode >> 3) & 0b00111
+	srcRegister := opcode & 0b00000111
 
-	loadValue, err := c.loadRegister(uint8(loadRegister))
+	loadValue, err := c.loadRegister(uint8(srcRegister))
 	if err != nil {
 		return fmt.Errorf("failed to load register: %v", err)
 	}
-	err = c.storeRegister(uint8(storeRegister), loadValue)
+	err = c.storeRegister(uint8(dstRegister), loadValue)
 	if err != nil {
 		return fmt.Errorf("failed to store register: %v", err)
 	}
