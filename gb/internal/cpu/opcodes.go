@@ -7,7 +7,6 @@ import "fmt"
 //   - pc     = the instruction's length in bytes (how far to advance PC)
 //   - cycles = the number of T-cycles (clock ticks) the instruction consumed
 var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
-	// 0x00 - 0x0F
 	0x00: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // NOP
 	0x01: func(c *Cpu) (uint16, int, error) { // LD BC, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
@@ -32,7 +31,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x0E: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0x0F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x10 - 0x1F
 	0x10: func(c *Cpu) (uint16, int, error) { return 2, 4, nil },
 	0x11: func(c *Cpu) (uint16, int, error) { // LD DE, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
@@ -57,7 +55,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x1E: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0x1F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x20 - 0x2F
 	0x20: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0x21: func(c *Cpu) (uint16, int, error) { // LD HL, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
@@ -82,7 +79,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x2E: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0x2F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x30 - 0x3F
 	0x30: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0x31: func(c *Cpu) (uint16, int, error) { // LD SP, n16
 		n16, err := c.mmu.ReadWordAt(c.registers.PC + 1)
@@ -107,7 +103,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x3E: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0x3F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x40
 	0x40: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // LD B, B
 	0x41: func(c *Cpu) (uint16, int, error) { // LD B, C
 		err := c.loadRegToReg(0x41)
@@ -209,25 +204,119 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 		return 1, 4, nil
 	},
 
-	// 0x50 - 0x5F  (LD D,r / LD E,r)  — all 1 byte
-	0x50: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x51: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x52: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x53: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x54: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x55: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x56: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
-	0x57: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x58: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x59: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x5A: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x5B: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x5C: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x5D: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
-	0x5E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
-	0x5F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
+	0x50: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x50)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x50: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x51: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x51)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x51: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x52: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x52)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x52: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x53: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x53)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x53: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x54: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x54)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x54: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x55: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x55)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x55: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x56: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x56)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x56: %v", err)
+		}
+		return 1, 8, nil
+	},
+	0x57: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x57)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x57: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x58: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x58)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x58: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x59: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x59)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x59: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x5A: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5A)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5A: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x5B: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5B)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5B: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x5C: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5C)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5C: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x5D: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5D)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5D: %v", err)
+		}
+		return 1, 4, nil
+	},
+	0x5E: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5E)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5E: %v", err)
+		}
+		return 1, 8, nil
+	},
+	0x5F: func(c *Cpu) (uint16, int, error) {
+		err := c.loadRegToReg(0x5F)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x5F: %v", err)
+		}
+		return 1, 4, nil
+	},
 
-	// 0x60 - 0x6F  (LD H,r / LD L,r)  — all 1 byte
 	0x60: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x61: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x62: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
@@ -245,7 +334,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x6E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x6F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x70 - 0x7F  (LD (HL),r / HALT / LD A,r)  — all 1 byte
 	0x70: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x71: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x72: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
@@ -263,7 +351,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x7E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x7F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x80 - 0x8F  (ADD A,r / ADC A,r)  — all 1 byte
 	0x80: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x81: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x82: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
@@ -281,7 +368,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x8E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x8F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0x90 - 0x9F  (SUB r / SBC A,r)  — all 1 byte
 	0x90: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x91: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0x92: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
@@ -299,7 +385,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x9E: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0x9F: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0xA0 - 0xAF  (AND r / XOR r)  — all 1 byte
 	0xA0: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0xA1: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0xA2: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
@@ -317,7 +402,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0xAE: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0xAF: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0xB0 - 0xBF  (OR r / CP r)  — all 1 byte
 	0xB0: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0xB1: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 	0xB2: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
@@ -335,7 +419,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0xBE: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
 	0xBF: func(c *Cpu) (uint16, int, error) { return 1, 4, nil },
 
-	// 0xC0 - 0xCF
 	0xC0: func(c *Cpu) (uint16, int, error) { return 1, 20, nil },
 	0xC1: func(c *Cpu) (uint16, int, error) { return 1, 12, nil },
 	0xC2: func(c *Cpu) (uint16, int, error) { return 3, 16, nil },
@@ -353,7 +436,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0xCE: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0xCF: func(c *Cpu) (uint16, int, error) { return 1, 16, nil },
 
-	// 0xD0 - 0xDF
 	0xD0: func(c *Cpu) (uint16, int, error) { return 1, 20, nil },
 	0xD1: func(c *Cpu) (uint16, int, error) { return 1, 12, nil },
 	0xD2: func(c *Cpu) (uint16, int, error) { return 3, 16, nil },
@@ -371,7 +453,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0xDE: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0xDF: func(c *Cpu) (uint16, int, error) { return 1, 16, nil },
 
-	// 0xE0 - 0xEF
 	0xE0: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0xE1: func(c *Cpu) (uint16, int, error) { return 1, 12, nil },
 	0xE2: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
@@ -389,7 +470,6 @@ var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0xEE: func(c *Cpu) (uint16, int, error) { return 2, 8, nil },
 	0xEF: func(c *Cpu) (uint16, int, error) { return 1, 16, nil },
 
-	// 0xF0 - 0xFF
 	0xF0: func(c *Cpu) (uint16, int, error) { return 2, 12, nil },
 	0xF1: func(c *Cpu) (uint16, int, error) { return 1, 12, nil },
 	0xF2: func(c *Cpu) (uint16, int, error) { return 1, 8, nil },
