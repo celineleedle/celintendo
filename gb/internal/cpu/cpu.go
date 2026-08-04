@@ -16,12 +16,7 @@ func (c *Cpu) Step() int {
 		log.Fatalf("Error reading opcode at PC: 0x%04X: %v", c.registers.PC, err)
 	}
 
-	opcodeFunc, exists := opcodeFuncMap[opcode]
-	if !exists {
-		log.Fatalf("Unknown opcode: 0x%02X at PC: 0x%04X", opcode, c.registers.PC)
-	}
-
-	pc, cycles, err := opcodeFunc(c)
+	pc, cycles, err := c.handleOpcode(opcode)
 	if err != nil {
 		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
 	}

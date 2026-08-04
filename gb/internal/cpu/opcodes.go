@@ -2,10 +2,42 @@ package cpu
 
 import "fmt"
 
-// opcodeFuncMap maps each 1-byte opcode to a handler that executes it and
-// returns (pc, cycles):
-//   - pc     = the instruction's length in bytes (how far to advance PC)
-//   - cycles = the number of T-cycles (clock ticks) the instruction consumed
+func (c *Cpu) handleOpcode(opcode byte) (uint16, int, error) {
+	blockBits := opcode >> 6
+
+	if opcode == 0xCB {
+		return c.handleCBOpcode(opcode)
+	}
+
+	switch blockBits {
+	case 0: // block 0
+		if opcode == 0x00 { // NOP
+			return 1, 4, nil
+		}
+
+	case 1: // block 1
+		err := c.loadRegToReg(opcode)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
+		}
+		return 1, 4, nil
+	case 2:
+	case 3:
+	}
+
+	return 0, 0, fmt.Errorf("unhandled opcode: 0x%02X", opcode)
+}
+
+func (c *Cpu) handleCBOpcode(opcode byte) (uint16, int, error) {
+	blockBits := opcode >> 6
+
+	switch blockBits {
+
+	}
+
+	return 0, 0, fmt.Errorf("unhandled CB opcode: 0x%02X", opcode)
+}
+
 var opcodeFuncMap = map[uint8]func(*Cpu) (pc uint16, cycles int, err error){
 	0x00: func(c *Cpu) (uint16, int, error) { return 1, 4, nil }, // NOP
 	0x01: func(c *Cpu) (uint16, int, error) { // LD BC, n16
