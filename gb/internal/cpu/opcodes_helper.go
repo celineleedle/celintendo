@@ -2,7 +2,7 @@ package cpu
 
 import "fmt"
 
-func (c *Cpu) loadRegToReg(opcode uint16) error {
+func (c *Cpu) loadRegToReg(opcode byte) error {
 	dstRegister := (opcode >> 3) & 0b00111
 	srcRegister := opcode & 0b00000111
 
@@ -18,7 +18,7 @@ func (c *Cpu) loadRegToReg(opcode uint16) error {
 	return nil
 }
 
-func (c *Cpu) loadRegister(register uint8) (uint8, error) {
+func (c *Cpu) loadRegister(register byte) (uint8, error) {
 	switch register {
 	case 0:
 		return c.registers.B, nil
@@ -45,7 +45,7 @@ func (c *Cpu) loadRegister(register uint8) (uint8, error) {
 	}
 }
 
-func (c *Cpu) storeRegister(register uint8, value uint8) error {
+func (c *Cpu) storeRegister(register byte, value uint8) error {
 	switch register {
 	case 0:
 		c.registers.B = value
