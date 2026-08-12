@@ -2,16 +2,18 @@ package cpu
 
 import (
 	"log"
+
+	"github.com/celineleedle/celintendo/gb/internal/bus"
 )
 
 type Cpu struct {
 	registers Registers
 
-	mmu Mmu
+	bus *bus.Bus
 }
 
 func (c *Cpu) Step() int {
-	opcode, err := c.mmu.ReadByteAt(c.registers.PC)
+	opcode, err := c.bus.ReadByteAt(c.registers.PC)
 	if err != nil {
 		log.Fatalf("Error reading opcode at PC: 0x%04X: %v", c.registers.PC, err)
 	}
