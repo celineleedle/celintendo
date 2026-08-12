@@ -2,9 +2,9 @@ package cpu
 
 import "fmt"
 
-func (c *Cpu) execute(opcode byte) (uint16, int, error) {
+func (c *Cpu) execute(opcode byte) error {
 	if opcode == 0x00 { // NOP
-		return 1, 4, nil
+		return nil
 	}
 
 	if opcode == 0xCB { // CB prefix
@@ -22,22 +22,22 @@ func (c *Cpu) execute(opcode byte) (uint16, int, error) {
 	case 3:
 	}
 
-	return 0, 0, fmt.Errorf("unhandled opcode: 0x%02X", opcode)
+	return fmt.Errorf("unhandled opcode: 0x%02X", opcode)
 }
 
-func (c *Cpu) handleCBOpcode(opcode byte) (uint16, int, error) {
+func (c *Cpu) handleCBOpcode(opcode byte) error {
 	blockBits := opcode >> 6
 
 	switch blockBits {
 
 	}
 
-	return 0, 0, fmt.Errorf("unhandled CB opcode: 0x%02X", opcode)
+	return fmt.Errorf("unhandled CB opcode: 0x%02X", opcode)
 }
 
-func (c *Cpu) blockZeroOpcode(opcode byte) (uint16, int, error) {
+func (c *Cpu) blockZeroOpcode(opcode byte) error {
 	if opcode == 0x00 { // NOP
-		return 1, 4, nil
+		return nil
 	}
 
 	// TODO
@@ -60,28 +60,28 @@ func (c *Cpu) blockZeroOpcode(opcode byte) (uint16, int, error) {
 
 	// lastFourBits := opcode & 0b00001111
 	// if lastFourBits ==
-	return 1, 4, nil
+	return nil
 }
 
-func (c *Cpu) blockOneOpcodeHandler(opcode byte) (uint16, int, error) {
+func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
 	err := c.loadRegToReg(opcode)
 	if err != nil {
-		return 0, 0, fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
+		return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
 	}
-	return 1, 4, nil
+	return nil
 }
 
-func (c *Cpu) blockTwoOpcodeHandler(opcode byte) (uint16, int, error) {
+func (c *Cpu) blockTwoOpcodeHandler(opcode byte) error {
 	actionBits := (opcode >> 3) & 0b00111
 	// operand := opcode & 0b00000111
 
 	if actionBits == 0 {
 		err := c.addToRegister(opcode)
 		if err != nil {
-			return 0, 0, fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
+			return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
 		}
-		return 1, 4, nil
+		return nil
 	}
 
-	return 1, 4, nil
+	return fmt.Errorf("unhandled opcode: 0x%02X", opcode)
 }

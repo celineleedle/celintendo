@@ -34,7 +34,7 @@ func (c *Cpu) Step() int {
 	}
 	c.registers.PC++ // increment PC to point to next instruction
 
-	pc, cycles, err := c.execute(opcode)
+	err = c.execute(opcode)
 	if err != nil {
 		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
 	}
