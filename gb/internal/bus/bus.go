@@ -19,37 +19,37 @@ type Bus struct {
 	data [0x10000]byte
 }
 
-func (bus *Bus) ReadByteAt(address uint16) (byte, error) {
-	if accessible := bus.accessible(address); !accessible {
+func (b *Bus) ReadByteAt(address uint16) (byte, error) {
+	if accessible := b.accessible(address); !accessible {
 		return 0x00, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
 	}
 
-	return bus.data[address], nil
+	return b.data[address], nil
 }
 
-func (bus *Bus) ReadWordAt(address uint16) (uint16, error) {
-	if accessible := bus.accessible(address); !accessible {
+func (b *Bus) ReadWordAt(address uint16) (uint16, error) {
+	if accessible := b.accessible(address); !accessible {
 		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
-	} else if accessible := bus.accessible(address + 1); !accessible {
+	} else if accessible := b.accessible(address + 1); !accessible {
 		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address+1)
 	}
 
-	lowByte := bus.data[address]
-	highByte := bus.data[address+1]
+	lowByte := b.data[address]
+	highByte := b.data[address+1]
 
 	return uint16(highByte)<<8 | uint16(lowByte), nil
 }
 
-func (bus *Bus) WriteByteAt(address uint16, value byte) error {
-	if accessible := bus.accessible(address); !accessible {
+func (b *Bus) WriteByteAt(address uint16, value byte) error {
+	if accessible := b.accessible(address); !accessible {
 		return fmt.Errorf("attempted to write to inaccessible memory at address 0x%04X", address)
 	}
 
-	bus.data[address] = value
+	b.data[address] = value
 	return nil
 }
 
-func (bus *Bus) accessible(address uint16) bool {
+func (b *Bus) accessible(address uint16) bool {
 	if address >= 0xE000 && address <= 0xFDFF {
 		return false
 	} else if address >= 0xFEA0 && address <= 0xFEFF {
