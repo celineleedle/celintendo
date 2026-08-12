@@ -26,7 +26,24 @@ func (c *Cpu) WriteCycle(address uint16, value byte) error {
 	return c.bus.WriteByteAt(address, value)
 }
 
-func (c *Cpu) Step() int {
+func (c *Cpu) ReadWordCycle(address uint16) (uint16, error) {
+	// advance time
+	// c.bus.Tick(4)
+	lowByte, err := c.bus.ReadByteAt(address)
+	if err != nil {
+		return 0, err
+	}
+
+	// c.bus.Tick(4)
+	highByte, err := c.bus.ReadByteAt(address + 1)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint16(highByte)<<8 | uint16(lowByte), nil
+}
+
+func (c *Cpu) Step() {
 	// fetch opcode at PC
 	opcode, err := c.ReadCycle(c.registers.PC)
 	if err != nil {
@@ -38,13 +55,6 @@ func (c *Cpu) Step() int {
 	if err != nil {
 		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
 	}
-	// TODO: add a debug boolean flag and gate these logs behind it.
-	log.Printf("Cycles executed: %d", cycles)
-	log.Printf("PC increment: %d", pc)
-
-	c.registers.PC += pc
-
-	return cycles
 }
 
 func (c *Cpu) Run() {

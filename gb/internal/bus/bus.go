@@ -17,6 +17,9 @@ import "fmt"
 // FFFF-FFFF | Interrupt Enable register (IE)
 type Bus struct {
 	data [0x10000]byte
+
+	// pointers to components here
+	// ppu, apu, timer, joypad, etc.
 }
 
 func (b *Bus) ReadByteAt(address uint16) (byte, error) {
@@ -25,19 +28,6 @@ func (b *Bus) ReadByteAt(address uint16) (byte, error) {
 	}
 
 	return b.data[address], nil
-}
-
-func (b *Bus) ReadWordAt(address uint16) (uint16, error) {
-	if accessible := b.accessible(address); !accessible {
-		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
-	} else if accessible := b.accessible(address + 1); !accessible {
-		return 0x0000, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address+1)
-	}
-
-	lowByte := b.data[address]
-	highByte := b.data[address+1]
-
-	return uint16(highByte)<<8 | uint16(lowByte), nil
 }
 
 func (b *Bus) WriteByteAt(address uint16, value byte) error {
