@@ -64,7 +64,7 @@ func (c *Cpu) blockZeroOpcode(opcode byte) error {
 }
 
 func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
-	err := c.loadRegToReg(opcode)
+	err := c.loadRegisterToRegister(opcode)
 	if err != nil {
 		return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
 	}
@@ -76,7 +76,7 @@ func (c *Cpu) blockTwoOpcodeHandler(opcode byte) error {
 	// operand := opcode & 0b00000111
 
 	if actionBits == 0 {
-		err := c.addToRegister(opcode)
+		err := c.addRegisterToA(opcode)
 		if err != nil {
 			return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
 		}

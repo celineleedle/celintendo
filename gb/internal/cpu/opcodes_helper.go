@@ -2,19 +2,30 @@ package cpu
 
 import "fmt"
 
-func (c *Cpu) loadRegToReg(opcode byte) error {
+func (c *Cpu) loadRegisterToRegister(opcode byte) error {
 	dstRegister := (opcode >> 3) & 0b00111
 	srcRegister := opcode & 0b00000111
 
-	loadValue, err := c.loadRegister(uint8(srcRegister))
+	loadValue, err := c.loadRegister(srcRegister)
 	if err != nil {
 		return fmt.Errorf("failed to load register: %v", err)
 	}
-	err = c.storeRegister(uint8(dstRegister), loadValue)
+	err = c.storeRegister(dstRegister, loadValue)
 	if err != nil {
 		return fmt.Errorf("failed to store register: %v", err)
 	}
 
+	return nil
+}
+
+func (c *Cpu) addRegisterToA(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	addValue, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return fmt.Errorf("failed to load register: %v", err)
+	}
+
+	c.registers.A += addValue
 	return nil
 }
 
@@ -33,7 +44,7 @@ func (c *Cpu) loadRegister(register byte) (uint8, error) {
 	case 5:
 		return c.registers.L, nil
 	case 6:
-		value, err := c.mmu.ReadByteAt(c.registers.HL())
+		value, err := c.ReadCycle(c.registers.HL()) // memory access, advance time
 		if err != nil {
 			return 0, fmt.Errorf("failed to read from memory at address 0x%04X: %v", c.registers.HL(), err)
 		}
@@ -60,7 +71,7 @@ func (c *Cpu) storeRegister(register byte, value uint8) error {
 	case 5:
 		c.registers.L = value
 	case 6:
-		err := c.mmu.WriteByteAt(c.registers.HL(), value)
+		err := c.WriteCycle(c.registers.HL(), value) // writing to memory, advance time
 		if err != nil {
 			return fmt.Errorf("failed to write to memory at address 0x%04X: %v", c.registers.HL(), err)
 		}
