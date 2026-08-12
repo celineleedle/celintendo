@@ -27,15 +27,12 @@ func (c *Cpu) WriteCycle(address uint16, value byte) error {
 }
 
 func (c *Cpu) ReadWordCycle(address uint16) (uint16, error) {
-	// advance time
-	// c.bus.Tick(4)
-	lowByte, err := c.bus.ReadByteAt(address)
+	lowByte, err := c.ReadCycle(address) // readcycle handles advancing ticks
 	if err != nil {
 		return 0, err
 	}
 
-	// c.bus.Tick(4)
-	highByte, err := c.bus.ReadByteAt(address + 1)
+	highByte, err := c.ReadCycle(address + 1)
 	if err != nil {
 		return 0, err
 	}
