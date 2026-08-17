@@ -73,7 +73,6 @@ func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
 
 func (c *Cpu) blockTwoOpcodeHandler(opcode byte) error {
 	actionBits := (opcode >> 3) & 0b00111
-	// operand := opcode & 0b00000111
 
 	if actionBits == 0 {
 		err := c.addRegisterToA(opcode)

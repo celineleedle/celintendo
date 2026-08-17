@@ -25,6 +25,11 @@ func (c *Cpu) addRegisterToA(opcode byte) error {
 		return fmt.Errorf("failed to load register: %v", err)
 	}
 
+	c.registers.SetFlag(ZeroBitIndex, c.registers.A+addValue == 0)
+	c.registers.SetFlag(SubtractionBitIndex, false)
+	c.registers.SetFlag(HalfCarryBitIndex, uint16(c.registers.A&0x0F)+uint16(addValue&0x0F) > 0x0F)
+	c.registers.SetFlag(CarryBitIndex, uint16(c.registers.A)+uint16(addValue) > 0xFF)
+
 	c.registers.A += addValue
 	return nil
 }
