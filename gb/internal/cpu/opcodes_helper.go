@@ -77,6 +77,29 @@ func (c *Cpu) subRegisterFromA(opcode byte) error {
 	return nil
 }
 
+func (c *Cpu) subCarryRegisterFromA(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	subValue, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	carry := 0
+	if c.registers.getFlag(carryBitIndex) {
+		carry = 1
+	}
+
+	diff := c.registers.A - subValue - uint8(carry)
+
+	c.registers.setFlag(zeroBitIndex, diff == 0)
+	c.registers.setFlag(subtractionBitIndex, true)
+	c.registers.setFlag(halfCarryBitIndex, c.registers.A&0x0F < (subValue&0x0F+uint8(carry)))
+	c.registers.setFlag(carryBitIndex, uint16(c.registers.A) < uint16(subValue+uint8(carry)))
+
+	c.registers.A = diff
+	return nil
+}
+
 func (c *Cpu) loadRegister(register byte) (uint8, error) {
 	switch register {
 	case 0:
