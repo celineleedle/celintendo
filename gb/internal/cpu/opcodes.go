@@ -74,13 +74,18 @@ func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
 func (c *Cpu) blockTwoOpcodeHandler(opcode byte) error {
 	actionBits := (opcode >> 3) & 0b00111
 
-	if actionBits == 0 {
-		err := c.addRegisterToA(opcode)
-		if err != nil {
-			return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
-		}
-		return nil
+	var err error
+
+	switch actionBits {
+	case 0:
+		err = c.addRegisterToA(opcode)
+	case 1:
+		err = c.addCarryRegisterToA(opcode)
+	case 2:
+		err = c.subRegisterFromA(opcode)
+	default:
+		err = fmt.Errorf("unhandled opcode: 0x%02X", opcode)
 	}
 
-	return fmt.Errorf("unhandled opcode: 0x%02X", opcode)
+	return err
 }

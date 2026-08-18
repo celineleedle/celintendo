@@ -22,15 +22,58 @@ func (c *Cpu) addRegisterToA(opcode byte) error {
 	srcRegister := opcode & 0b00000111
 	addValue, err := c.loadRegister(srcRegister)
 	if err != nil {
-		return fmt.Errorf("failed to load register: %v", err)
+		return err
 	}
 
-	c.registers.SetFlag(ZeroBitIndex, c.registers.A+addValue == 0)
-	c.registers.SetFlag(SubtractionBitIndex, false)
-	c.registers.SetFlag(HalfCarryBitIndex, uint16(c.registers.A&0x0F)+uint16(addValue&0x0F) > 0x0F)
-	c.registers.SetFlag(CarryBitIndex, uint16(c.registers.A)+uint16(addValue) > 0xFF)
+	sum := c.registers.A + addValue
 
-	c.registers.A += addValue
+	c.registers.setFlag(zeroBitIndex, sum == 0)
+	c.registers.setFlag(subtractionBitIndex, false)
+	c.registers.setFlag(halfCarryBitIndex, c.registers.A&0x0F+addValue&0x0F > 0x0F)
+	c.registers.setFlag(carryBitIndex, uint16(c.registers.A)+uint16(addValue) > 0xFF)
+
+	c.registers.A = sum
+	return nil
+}
+
+func (c *Cpu) addCarryRegisterToA(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	addValue, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	carry := 0
+	if c.registers.getFlag(carryBitIndex) {
+		carry = 1
+	}
+
+	sum := c.registers.A + addValue + uint8(carry)
+
+	c.registers.setFlag(zeroBitIndex, sum == 0)
+	c.registers.setFlag(subtractionBitIndex, false)
+	c.registers.setFlag(halfCarryBitIndex, c.registers.A&0x0F+addValue&0x0F+uint8(carry) > 0x0F)
+	c.registers.setFlag(carryBitIndex, uint16(c.registers.A)+uint16(addValue)+uint16(carry) > 0xFF)
+
+	c.registers.A = sum
+	return nil
+}
+
+func (c *Cpu) subRegisterFromA(opcode byte) error {
+	srcRegister := opcode ^ 0b00000111
+	subValue, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	diff := c.registers.A - subValue
+
+	c.registers.setFlag(zeroBitIndex, diff == 0)
+	c.registers.setFlag(subtractionBitIndex, true)
+	c.registers.setFlag(halfCarryBitIndex, c.registers.A&0x0F < subValue&0x0F)
+	c.registers.setFlag(carryBitIndex, c.registers.A < subValue)
+
+	c.registers.A = diff
 	return nil
 }
 
