@@ -12,27 +12,27 @@ type Cpu struct {
 	bus *bus.Bus
 }
 
-func (c *Cpu) ReadCycle(address uint16) (byte, error) {
+func (c *Cpu) readCycle(address uint16) (byte, error) {
 	// advance time
 	// c.bus.Tick(4) // 4 t-cycles / 1 m-cycle for a read
 
 	return c.bus.ReadByteAt(address)
 }
 
-func (c *Cpu) WriteCycle(address uint16, value byte) error {
+func (c *Cpu) writeCycle(address uint16, value byte) error {
 	// advance time
 	// c.bus.Tick(4) // 4 t-cycles / 1 m-cycle for a write
 
 	return c.bus.WriteByteAt(address, value)
 }
 
-func (c *Cpu) ReadWordCycle(address uint16) (uint16, error) {
-	lowByte, err := c.ReadCycle(address) // readcycle handles advancing ticks
+func (c *Cpu) readWordCycle(address uint16) (uint16, error) {
+	lowByte, err := c.readCycle(address) // readcycle handles advancing ticks
 	if err != nil {
 		return 0, err
 	}
 
-	highByte, err := c.ReadCycle(address + 1)
+	highByte, err := c.readCycle(address + 1)
 	if err != nil {
 		return 0, err
 	}
@@ -40,7 +40,7 @@ func (c *Cpu) ReadWordCycle(address uint16) (uint16, error) {
 	return uint16(highByte)<<8 | uint16(lowByte), nil
 }
 
-func (c *Cpu) Step() {
+func (c *Cpu) step() error {
 	// fetch opcode at PC
 	opcode, err := c.ReadCycle(c.registers.PC)
 	if err != nil {

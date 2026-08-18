@@ -14,12 +14,18 @@ func (r *Registers) BC() uint16 { return uint16(r.B)<<8 | uint16(r.C) }
 func (r *Registers) DE() uint16 { return uint16(r.D)<<8 | uint16(r.E) }
 func (r *Registers) HL() uint16 { return uint16(r.H)<<8 | uint16(r.L) }
 
-const ZeroBitIndex = 7
-const SubtractionBitIndex = 6
-const HalfCarryBitIndex = 5
-const CarryBitIndex = 4
+const (
+	zeroBitIndex        = 7
+	subtractionBitIndex = 6
+	halfCarryBitIndex   = 5
+	carryBitIndex       = 4
+)
 
-func (r *Registers) SetFlag(bitIndex int, value bool) {
+func (r *Registers) getFlag(bitIndex int) bool {
+	return (r.F&(uint8(1)<<bitIndex))>>bitIndex == 1
+}
+
+func (r *Registers) setFlag(bitIndex int, value bool) {
 	if value {
 		r.F |= uint8(1) << bitIndex
 	} else {
@@ -27,22 +33,22 @@ func (r *Registers) SetFlag(bitIndex int, value bool) {
 	}
 }
 
-func (r *Registers) SetAF(value uint16) {
+func (r *Registers) setAF(value uint16) {
 	r.A = uint8(value >> 8)
 	r.F = uint8(value & 0xF0) // flag register uses bits 7, 6, 5, 4 only
 }
 
-func (r *Registers) SetBC(value uint16) {
+func (r *Registers) setBC(value uint16) {
 	r.B = uint8(value >> 8)
 	r.C = uint8(value & 0xFF)
 }
 
-func (r *Registers) SetDE(value uint16) {
+func (r *Registers) setDE(value uint16) {
 	r.D = uint8(value >> 8)
 	r.E = uint8(value & 0xFF)
 }
 
-func (r *Registers) SetHL(value uint16) {
+func (r *Registers) setHL(value uint16) {
 	r.H = uint8(value >> 8)
 	r.L = uint8(value & 0xFF)
 }
