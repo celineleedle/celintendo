@@ -60,7 +60,7 @@ func (c *Cpu) addCarryRegisterToA(opcode byte) error {
 }
 
 func (c *Cpu) subRegisterFromA(opcode byte) error {
-	srcRegister := opcode ^ 0b00000111
+	srcRegister := opcode & 0b00000111
 	subValue, err := c.loadRegister(srcRegister)
 	if err != nil {
 		return err
