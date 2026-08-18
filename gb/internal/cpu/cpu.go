@@ -1,8 +1,6 @@
 package cpu
 
 import (
-	"log"
-
 	"github.com/celineleedle/celintendo/gb/internal/bus"
 )
 
@@ -42,16 +40,19 @@ func (c *Cpu) readWordCycle(address uint16) (uint16, error) {
 
 func (c *Cpu) step() error {
 	// fetch opcode at PC
-	opcode, err := c.ReadCycle(c.registers.PC)
+	pc := c.registers.PC
+	opcode, err := c.readCycle(pc)
 	if err != nil {
-		log.Fatalf("Error reading opcode at PC: 0x%04X: %v", c.registers.PC, err)
+		return err
 	}
 	c.registers.PC++ // increment PC to point to next instruction
 
 	err = c.execute(opcode)
 	if err != nil {
-		log.Fatalf("Error executing opcode: 0x%02X at PC: 0x%04X: %v", opcode, c.registers.PC, err)
+		return err
 	}
+
+	return nil
 }
 
 func (c *Cpu) Run() {

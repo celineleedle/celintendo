@@ -8,11 +8,11 @@ func (c *Cpu) loadRegisterToRegister(opcode byte) error {
 
 	loadValue, err := c.loadRegister(srcRegister)
 	if err != nil {
-		return fmt.Errorf("failed to load register: %v", err)
+		return err
 	}
 	err = c.storeRegister(dstRegister, loadValue)
 	if err != nil {
-		return fmt.Errorf("failed to store register: %v", err)
+		return err
 	}
 
 	return nil
@@ -49,9 +49,9 @@ func (c *Cpu) loadRegister(register byte) (uint8, error) {
 	case 5:
 		return c.registers.L, nil
 	case 6:
-		value, err := c.ReadCycle(c.registers.HL()) // memory access, advance time
+		value, err := c.readCycle(c.registers.HL()) // memory access, advance time
 		if err != nil {
-			return 0, fmt.Errorf("failed to read from memory at address 0x%04X: %v", c.registers.HL(), err)
+			return 0, fmt.Errorf("invalid address in register HL: %v", err)
 		}
 		return value, nil
 	case 7:
@@ -76,9 +76,9 @@ func (c *Cpu) storeRegister(register byte, value uint8) error {
 	case 5:
 		c.registers.L = value
 	case 6:
-		err := c.WriteCycle(c.registers.HL(), value) // writing to memory, advance time
+		err := c.writeCycle(c.registers.HL(), value) // writing to memory, advance time
 		if err != nil {
-			return fmt.Errorf("failed to write to memory at address 0x%04X: %v", c.registers.HL(), err)
+			return fmt.Errorf("invalid address in register HL: %w", err)
 		}
 	case 7:
 		c.registers.A = value
