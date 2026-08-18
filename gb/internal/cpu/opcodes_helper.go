@@ -18,7 +18,7 @@ func (c *Cpu) loadRegisterToRegister(opcode byte) error {
 	return nil
 }
 
-func (c *Cpu) addRegisterToA(opcode byte) error {
+func (c *Cpu) addRegister(opcode byte) error {
 	srcRegister := opcode & 0b00000111
 	addValue, err := c.loadRegister(srcRegister)
 	if err != nil {
@@ -36,7 +36,7 @@ func (c *Cpu) addRegisterToA(opcode byte) error {
 	return nil
 }
 
-func (c *Cpu) addCarryRegisterToA(opcode byte) error {
+func (c *Cpu) addCarryRegister(opcode byte) error {
 	srcRegister := opcode & 0b00000111
 	addValue, err := c.loadRegister(srcRegister)
 	if err != nil {
@@ -59,7 +59,7 @@ func (c *Cpu) addCarryRegisterToA(opcode byte) error {
 	return nil
 }
 
-func (c *Cpu) subRegisterFromA(opcode byte) error {
+func (c *Cpu) subRegister(opcode byte) error {
 	srcRegister := opcode & 0b00000111
 	subValue, err := c.loadRegister(srcRegister)
 	if err != nil {
@@ -77,7 +77,7 @@ func (c *Cpu) subRegisterFromA(opcode byte) error {
 	return nil
 }
 
-func (c *Cpu) subCarryRegisterFromA(opcode byte) error {
+func (c *Cpu) subCarryRegister(opcode byte) error {
 	srcRegister := opcode & 0b00000111
 	subValue, err := c.loadRegister(srcRegister)
 	if err != nil {
@@ -97,6 +97,78 @@ func (c *Cpu) subCarryRegisterFromA(opcode byte) error {
 	c.registers.setFlag(carryBitIndex, uint16(c.registers.A) < uint16(subValue+uint8(carry)))
 
 	c.registers.A = diff
+	return nil
+}
+
+func (c *Cpu) andRegister(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	val, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	res := c.registers.A & val
+
+	c.registers.setFlag(zeroBitIndex, res == 0)
+	c.registers.setFlag(subtractionBitIndex, false)
+	c.registers.setFlag(halfCarryBitIndex, true)
+	c.registers.setFlag(carryBitIndex, false)
+
+	c.registers.A = res
+	return nil
+}
+
+func (c *Cpu) xorRegister(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	val, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	res := c.registers.A ^ val
+
+	c.registers.setFlag(zeroBitIndex, res == 0)
+	c.registers.setFlag(subtractionBitIndex, false)
+	c.registers.setFlag(halfCarryBitIndex, false)
+	c.registers.setFlag(carryBitIndex, false)
+
+	c.registers.A = res
+	return nil
+}
+
+func (c *Cpu) orRegister(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	val, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	res := c.registers.A | val
+
+	c.registers.setFlag(zeroBitIndex, res == 0)
+	c.registers.setFlag(subtractionBitIndex, false)
+	c.registers.setFlag(halfCarryBitIndex, true)
+	c.registers.setFlag(carryBitIndex, false)
+
+	c.registers.A = res
+	return nil
+}
+
+func (c *Cpu) compareRegister(opcode byte) error {
+	srcRegister := opcode & 0b00000111
+	subValue, err := c.loadRegister(srcRegister)
+	if err != nil {
+		return err
+	}
+
+	// discards result
+	diff := c.registers.A - subValue
+
+	c.registers.setFlag(zeroBitIndex, diff == 0)
+	c.registers.setFlag(subtractionBitIndex, true)
+	c.registers.setFlag(halfCarryBitIndex, c.registers.A&0x0F < subValue&0x0F)
+	c.registers.setFlag(carryBitIndex, c.registers.A < subValue)
+
 	return nil
 }
 
