@@ -11,18 +11,23 @@ func (c *Cpu) execute(opcode byte) error {
 		return c.handleCBOpcode(opcode)
 	}
 
+	var err error
+
 	blockBits := opcode >> 6
 	switch blockBits {
 	case 0:
-		return c.blockZeroOpcode(opcode)
+		err = c.blockZeroOpcode(opcode)
 	case 1:
-		return c.blockOneOpcodeHandler(opcode)
+		err = c.blockOneOpcodeHandler(opcode)
 	case 2:
-		return c.blockTwoOpcodeHandler(opcode)
+		err = c.blockTwoOpcodeHandler(opcode)
 	case 3:
 	}
 
-	return fmt.Errorf("unhandled opcode: 0x%02X", opcode)
+	if err != nil {
+		return fmt.Errorf("opcode: 0x%02X %w", opcode, err)
+	}
+	return nil
 }
 
 func (c *Cpu) handleCBOpcode(opcode byte) error {
@@ -66,7 +71,7 @@ func (c *Cpu) blockZeroOpcode(opcode byte) error {
 func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
 	err := c.loadRegisterToRegister(opcode)
 	if err != nil {
-		return fmt.Errorf("failed opcode 0x%02X: %v", opcode, err)
+		return err
 	}
 	return nil
 }
@@ -84,7 +89,7 @@ func (c *Cpu) blockTwoOpcodeHandler(opcode byte) error {
 	case 2:
 		err = c.subRegisterFromA(opcode)
 	default:
-		err = fmt.Errorf("unhandled opcode: 0x%02X", opcode)
+		err = fmt.Errorf("unknown opcode")
 	}
 
 	return err

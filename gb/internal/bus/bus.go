@@ -24,7 +24,7 @@ type Bus struct {
 
 func (b *Bus) ReadByteAt(address uint16) (byte, error) {
 	if accessible := b.accessible(address); !accessible {
-		return 0x00, fmt.Errorf("attempted to read from inaccessible memory at address 0x%04X", address)
+		return 0x00, fmt.Errorf("read 0x%04X - inaccessible memory", address)
 	}
 
 	return b.data[address], nil
@@ -32,7 +32,7 @@ func (b *Bus) ReadByteAt(address uint16) (byte, error) {
 
 func (b *Bus) WriteByteAt(address uint16, value byte) error {
 	if accessible := b.accessible(address); !accessible {
-		return fmt.Errorf("attempted to write to inaccessible memory at address 0x%04X", address)
+		return fmt.Errorf("write 0x%04X - inaccessible memory", address)
 	}
 
 	b.data[address] = value

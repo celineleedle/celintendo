@@ -94,13 +94,13 @@ func (c *Cpu) loadRegister(register byte) (uint8, error) {
 	case 6:
 		value, err := c.readCycle(c.registers.HL()) // memory access, advance time
 		if err != nil {
-			return 0, fmt.Errorf("invalid address in register HL: %v", err)
+			return 0, err
 		}
 		return value, nil
 	case 7:
 		return c.registers.A, nil
 	default:
-		return 0, fmt.Errorf("invalid register: %d", register)
+		return 0, fmt.Errorf("load register %d", register)
 	}
 }
 
@@ -121,12 +121,12 @@ func (c *Cpu) storeRegister(register byte, value uint8) error {
 	case 6:
 		err := c.writeCycle(c.registers.HL(), value) // writing to memory, advance time
 		if err != nil {
-			return fmt.Errorf("invalid address in register HL: %w", err)
+			return err
 		}
 	case 7:
 		c.registers.A = value
 	default:
-		return fmt.Errorf("invalid register: %d", register)
+		return fmt.Errorf("store register %d", register)
 	}
 
 	return nil
