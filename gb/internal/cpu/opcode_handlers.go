@@ -2,6 +2,34 @@ package cpu
 
 import "fmt"
 
+func (c *Cpu) blockZeroOpcodeHandler(opcode byte) error {
+	if opcode == 0x00 { // NOP
+		return nil
+	}
+
+	// TODO
+	lastThreeBits := opcode & 0b00000111
+	if lastThreeBits == 0b000 {
+		// jr imm8
+		// jr cond imm8
+	} else if lastThreeBits == 0b111 {
+		// rlca
+		// rrca
+		// rla
+		// rra
+		// daa
+		// cpl
+		// scf
+		// ccf
+	} else if lastThreeBits == 0b011 {
+
+	}
+
+	// lastFourBits := opcode & 0b00001111
+	// if lastFourBits ==
+	return nil
+}
+
 func (c *Cpu) blockOneOpcodeHandler(opcode byte) error {
 	err := c.loadRegisterToRegister(opcode)
 	if err != nil {

@@ -16,7 +16,7 @@ func (c *Cpu) execute(opcode byte) error {
 	blockBits := opcode >> 6
 	switch blockBits {
 	case 0:
-		err = c.blockZeroOpcode(opcode)
+		err = c.blockZeroOpcodeHandler(opcode)
 	case 1:
 		err = c.blockOneOpcodeHandler(opcode)
 	case 2:
@@ -38,32 +38,4 @@ func (c *Cpu) handleCBOpcode(opcode byte) error {
 	}
 
 	return fmt.Errorf("unhandled CB opcode: 0x%02X", opcode)
-}
-
-func (c *Cpu) blockZeroOpcode(opcode byte) error {
-	if opcode == 0x00 { // NOP
-		return nil
-	}
-
-	// TODO
-	lastThreeBits := opcode & 0b00000111
-	if lastThreeBits == 0b000 {
-		// jr imm8
-		// jr cond imm8
-	} else if lastThreeBits == 0b111 {
-		// rlca
-		// rrca
-		// rla
-		// rra
-		// daa
-		// cpl
-		// scf
-		// ccf
-	} else if lastThreeBits == 0b011 {
-
-	}
-
-	// lastFourBits := opcode & 0b00001111
-	// if lastFourBits ==
-	return nil
 }

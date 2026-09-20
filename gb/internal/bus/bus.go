@@ -2,6 +2,7 @@ package bus
 
 import "fmt"
 
+// Bus
 // memory map
 // 0000-3FFF | 16 KiB ROM bank 00 | From cartridge, usually a fixed bank
 // 4000-7FFF | 16 KiB ROM Bank 01-NN | From cartridge, switchable bank via mapper (if any)
