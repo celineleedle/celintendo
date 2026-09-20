@@ -28,9 +28,5 @@ go.work.sum
 .env
 
 # Editor/IDE
- .idea/
- .vscode/
-
-*.xml
-*.iml
-/.idea/.gitignore
+.idea/
+.vscode/
