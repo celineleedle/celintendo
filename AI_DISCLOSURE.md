@@ -8,7 +8,7 @@ models-used:
 providers:
   - Anthropic
 scope: |
-  All code and documentation was written by the repository author.
+  All code and documentation were written by the repository author.
   AI tools were solely utilized for gathering research materials and conducting code reviews.
 last-updated: 2026-10-05
 ---
